@@ -25,7 +25,7 @@ run = function(mainfolder = "",
 #			fg: functional group number
 #			fgname: functional group name
 #			G1: Diameter growth rate of trees in layer 1 (full sun); G2: Diameter growth rate of trees in layer 2 (shaded by one layer of trees); G3: Diameter growth rate of trees in layer 3 (shaded by two layers of trees); G4: Diameter growth rate of trees in layer 4 (shaded by three layers of trees).  All in units: cm/year.
-#			mu1: mortality rate of trees in layer 1; mu2: mortality rate of trees in layer 2; mu3: mortality rate of trees in layer 3; mu4: mortality rate of trees in layer 4. All in unites 1/years.
+#			mu1: mortality rate of trees in layer 1; mu2: mortality rate of trees in layer 2; mu3: mortality rate of trees in layer 3; mu4: mortality rate of trees in layer 4. All in units 1/years.
 #			F: new recruitments (at dnot, 1cm dbh). Units individuals/Ha/yr. 
 #			wd: wood density (used for biomass calculations, has no effect on simulation). Units g/cm3
 #initialconditionsfile - the initital conditions of the forest in the format: 
@@ -131,7 +131,7 @@ calcstats = function(data,fgdata){
 #everything else is per hectare. 
 #no final number are totals for the functional group. 
 #final numbers indicate size classes for sub calculations: 
-#	size classes for n (1-6): >1, <5; >5,<20; <20,<60; >=60; >=5 (cm dbh)
+#	size classes for n (1-6): >1,<5; >5,<20; >=20,<60; >=60; >=5 (cm dbh)
 #	size classes for ba and agb (1-3): >5,<20; >=20,<60; >=60 (cm dbh)
 ######################################	
 	out = data.frame(totcarea=NaN,numcohorts=NaN,
@@ -165,9 +165,9 @@ calcstats = function(data,fgdata){
 	for(fg in unique(bigdata[,4])){
 		ssdata = bigdata[bigdata[,4]==fg,]
 		nbaabg = n_ba_agb(ssdata,fgdata)
-		out[,3+fg] = nbaabg$n
-		out[,8+fg] = nbaabg$ba
-		out[,13+fg] = nbaabg$agb
+		out[,2+fg] = nbaabg$n
+		out[,7+fg] = nbaabg$ba
+		out[,12+fg] = nbaabg$agb
 	}
 
 	for(fg in unique(data[,4])){
@@ -218,7 +218,7 @@ n_ba_agb = function(godata,fgdata){
 	ba = sum((godata[,1]/200)^2*pi*godata[,2])
 	
 	#agb calculation from Chave et al. 2005. Materials and Methods of supplementary text. 
-	agb = NaN
+	agb = 0
 	if(length(unique(godata[,4]))==1){
 		wd = fgdata[fgdata$fg==unique(godata[,4]),]$wd
 		agb = sum(wd*exp(-1.499+2.148*log(godata[,1])+0.207*log(godata[,1])^2-0.0281*log(godata[,1])^3)/1000*godata[,2])
